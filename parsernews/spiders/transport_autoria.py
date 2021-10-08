@@ -4,7 +4,6 @@ import scrapy
 class FullParserAutoRia(scrapy.Spider):
     name = 'parser_auto_ria'
     start_urls = ['https://auto.ria.com/uk/']
-    pages_count = 10
     domain = 'https://auto.ria.com'
 
     # Parsing links from the main page
@@ -40,7 +39,8 @@ class FullParserAutoRia(scrapy.Spider):
             yield response.follow(href, self.save_info_new_positions)
 
     # Saving information on new items
-    def save_info_new_positions(self, response):
+    @staticmethod
+    def save_info_new_positions(response):
         item = {
             'status': "Новий транспорт",
             'url': response.request.url,
@@ -54,7 +54,8 @@ class FullParserAutoRia(scrapy.Spider):
         yield item
 
     # Saving information on old items
-    def save_info_old_positions(self, response):
+    @staticmethod
+    def save_info_old_positions(response):
         item = {
             'status': "Б/У транспорт",
             'url': response.request.url,
