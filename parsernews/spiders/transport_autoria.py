@@ -5,7 +5,7 @@ class FullParserAutoRia(scrapy.Spider):
     name = 'parser_auto_ria'
     start_urls = ['https://auto.ria.com/uk/']
     domain = 'https://auto.ria.com'
-    page_count = 3
+    page_count = 7
 
     def parse(self, response, **kwargs):
         for href in response.xpath('//a[@class="elem-tab"]/@href').extract():

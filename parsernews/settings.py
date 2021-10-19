@@ -14,7 +14,7 @@ NEWSPIDER_MODULE = 'parsernews.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = 'parsernews (+https://auto.ria.com/uk/)'
+USER_AGENT = 'parsernews (+https://bitcoinist.com/)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
