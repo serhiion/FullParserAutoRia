@@ -14,11 +14,17 @@ FORM_DATA = {
 }
 
 
+def control():
+    counter = int(input("Введіть кількість сторінок: "))
+    return counter
+
+
 class BitkoinList(scrapy.Spider):
     name = 'bitkoin_list'
     start_urls = ['https://bitcoinist.com/']
     pagination_url = 'https://bitcoinist.com/?ajax-request=jnews'
     my_page = 1
+    max_page = control()
 
     def parse(self, response, **kwargs):
         for href in response.xpath("//li[contains(@class,'menu-item "
@@ -49,7 +55,7 @@ class BitkoinList(scrapy.Spider):
                 "/a/@href"):
             yield response.follow(href, self.save_info)
 
-        if next_url:
+        if next_url and self.my_page <= self.max_page - 1:
             self.my_page += 1
             yield from self.pars_next_button(response)
 
