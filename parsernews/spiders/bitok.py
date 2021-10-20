@@ -1,5 +1,7 @@
 import scrapy
+from scrapy.loader import ItemLoader
 from scrapy.selector import Selector
+from parsernews.items import BitcoinListItem
 
 FORM_DATA = {
     'module': True,
@@ -60,20 +62,45 @@ class BitkoinList(scrapy.Spider):
             yield from self.pars_next_button(response)
 
     def save_info(self, response):
-        item = {
-            'name_of_group': "Bitcoin",
-            'url': response.request.url,
-            'title': response.xpath("//h1[contains(@class,'jeg_post_title')]"
-                                    "/text()").extract_first('').strip(),
-            'authors': response.xpath("//div[contains(@class,'meta_left')]"
-                                      "/div[contains(@class,"
-                                      " 'jeg_meta_author')]"
-                                      "/img/@alt").extract_first('').strip(),
-            'date': response.xpath("//div[contains(@class,'meta_left')]"
-                                   "/div[contains(@class, 'jeg_meta_date')]"
-                                   "/a/text()").extract_first('').strip(),
-            'text': response.xpath(
-                "//div[contains(@class,'entry-content no-share')]"
-                "/div/p/text()").extract()
-        }
-        yield item
+        news_item = ItemLoader(item=BitcoinListItem(), response=response)
+
+        news_item.add_value('name_of_group', "Bitcoin")
+        news_item.add_value('main_url', response.request.url)
+        news_item.add_xpath('title',
+                            "//h1[contains(@class,'jeg_post_title')]"
+                            "/text()")
+        news_item.add_xpath('authors',
+                            "//div[contains(@class,'meta_left')]"
+                            "/div[contains(@class,"
+                            " 'jeg_meta_author')]"
+                            "/img/@alt"
+                            )
+        news_item.add_xpath('date',
+                            "//div[contains(@class,'meta_left')]"
+                            "/div[contains(@class, 'jeg_meta_date')]"
+                            "/a/text()"
+                            )
+        news_item.add_xpath('text',
+                            "//div[contains(@class,'entry-content no-share')]"
+                            "/div/p/text()"
+                            )
+        yield news_item.load_item()
+
+
+        # item = {
+        #     'name_of_group': "Bitcoin",
+        #     'url': response.request.url,
+        #     'title': response.xpath("//h1[contains(@class,'jeg_post_title')]"
+        #                             "/text()").extract_first('').strip(),
+        #     'authors': response.xpath("//div[contains(@class,'meta_left')]"
+        #                               "/div[contains(@class,"
+        #                               " 'jeg_meta_author')]"
+        #                               "/img/@alt").extract_first('').strip(),
+        #     'date': response.xpath("//div[contains(@class,'meta_left')]"
+        #                            "/div[contains(@class, 'jeg_meta_date')]"
+        #                            "/a/text()").extract_first('').strip(),
+        #     'text': response.xpath(
+        #         "//div[contains(@class,'entry-content no-share')]"
+        #         "/div/p/text()").extract()
+        # }
+        # yield item
